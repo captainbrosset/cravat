@@ -4,14 +4,36 @@
     <meta charset="utf-8">
     <title>cravat</title>
     <link rel="stylesheet" href="cravat-default-min.css">
+    <style>
+      #snap {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        border: 15px solid white;
+        border-bottom-width: 40px;
+        width: 150px;
+        height: 150px;
+        box-shadow: 1px 1px 12px #555;
+        -moz-transform:rotate(-20deg);
+        -webkit-transform:rotate(-20deg);
+        transform:rotate(-20deg);
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <img id="snap" />
     <script src="cravat-min.js"></script>
     <script>
       new Cravat({
-        width:300,
-        height:300
+        width: 300,
+        height: 300,
+        root: document.getElementById('root'),
+        onSnap: function(dataURL) {
+          document.getElementById('snap').src = dataURL;
+          document.getElementById('snap').style.display = 'block';
+        }
       });
     </script>
   </body>
