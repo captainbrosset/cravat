@@ -16,7 +16,10 @@ Take a look at the example html file. Including cravat in a site is as simple as
 var cravat = new Cravat({
   width: 300,
   height: 300,
-  root: myDiv
+  root: myDiv,
+  onSnap: function(dataURL) {
+    // Called when a snapshot is taken
+  }
 });
 ```
 

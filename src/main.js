@@ -5,12 +5,14 @@
  * root (HTMLElement) Where to append the new cravat (optional, appended to body by default)
  * width (Number) The expected width of the video (optional, 420 by default)
  * height (Number) The expected height of the video (optional, 420 by default)
+ * onSnap (Function) Function to be executed when a snapshot is taken, will be given the dataURL as argument (by default, the image will be downloaded to the browser)
  */
 
 function Cravat(options) {
   this._rootEl = options.root || document.body;
   this._width = options.width || 420;
   this._height = options.height || 420;
+  this._onSnap = options.onSnap;
 
   this._init();
 };
@@ -133,7 +135,7 @@ Cravat.prototype._init = function() {
 
     // Create the transformer, snapper, overlayer, filterer
     this._transformer = new Cravat.Transformer(this._videoEl, this._videoCtx);
-    this._snapper = new Cravat.Snapper(this._videoCanvasEl, this._overlayCanvasEl, this._rootEl);
+    this._snapper = new Cravat.Snapper(this._videoCanvasEl, this._overlayCanvasEl, this._rootEl, this._onSnap);
     this._overlayer = new Cravat.Overlayer(this._overlayCtx);
     this._filterer = new Cravat.Filterer(this._videoCtx);
 
