@@ -6,6 +6,8 @@ Cravat is a small javascript utility that creates a photo booth in your web page
 
 Cravat relies on the latest sexiest HTML5 APIs, so you'll need the latest browsers to run it (namely *video*, *canvas* and *getUserMedia*).
 
+See it in action here http://captainbrosset.github.com/cravat/
+
 ## Using cravat
 
 Take a look at the example html file. Including cravat in a site is as simple as including 1 js and 1 css file and then doing something like:
