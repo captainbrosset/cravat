@@ -42,7 +42,7 @@ Cravat.i18n = {
 };
 
 Cravat.prototype._animLoop = function(render, element) {
-  var running, lastFrame = +new Date;
+  var running, lastFrame = +new Date, requestAnimationFrame = requestAnimationFrame || mozRequestAnimationFrame;
 
   function loop(now) {
     if (running !== false) {
@@ -148,7 +148,9 @@ Cravat.prototype._init = function() {
     }, function(stream) {
       this._mediaStream = stream;
       this._videoEl.src = window.URL.createObjectURL(this._mediaStream);
-    }.bind(this));
+    }.bind(this), function(err) {
+      this._rootEl.innerHTML = 'Sorry getUserMedia failed with error: ' + err;
+    });
 
     // Start the loop to draw the video to the canvas, going through the current transform and current filter
     this._animLoop(function() {
