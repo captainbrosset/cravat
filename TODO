@@ -1,2 +1,3 @@
 - make it easy to add custom filters, transforms and overlays
 - make the sample page nicer, show all snapshot images on the side, ability to download them (a la incredibooth)
+- getUserMedia requires a third mandatory parameter in Moz (https://bugzilla.mozilla.org/show_bug.cgi?id=802835)
