@@ -42,11 +42,12 @@ Cravat.i18n = {
 };
 
 Cravat.prototype._animLoop = function(render, element) {
-  var running, lastFrame = +new Date, requestAnimationFrame = requestAnimationFrame || mozRequestAnimationFrame;
+  var running, lastFrame = +new Date,
+    raf = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame;
 
   function loop(now) {
     if (running !== false) {
-      requestAnimationFrame(loop, element);
+      raf(loop, element);
       running = render(now - lastFrame);
       lastFrame = now;
     }
