@@ -5,14 +5,18 @@
  * root (HTMLElement) Where to append the new cravat (optional, appended to body by default)
  * width (Number) The expected width of the video (optional, 420 by default)
  * height (Number) The expected height of the video (optional, 420 by default)
+ * showControls (Boolean) Whether controls should be shown or not (defaults to true)
  * onSnap (Function) Function to be executed when a snapshot is taken, will be given the dataURL as argument (by default, the image will be downloaded to the browser)
+ * onReady (Function) Function to be executed when the camera access has been allowed by the user
  */
 
 function Cravat(options) {
   this._rootEl = options.root || document.body;
   this._width = options.width || 420;
   this._height = options.height || 420;
+  this._showControls = typeof options.showControls === 'undefined' ? true : options.showControls;
   this._onSnap = options.onSnap;
+  this._onReady = options.onReady || function() {};
 
   this._init();
 };
@@ -63,37 +67,42 @@ Cravat.prototype._createMarkup = function() {
         <canvas class="overlay"></canvas>\
         <video style="display:none" autoplay></video>\
         <div class="count-down"></div>\
-      </div>\
+      </div>';
+  if (this._showControls) {
+    html += '\
       <div class="tools">\
         <button class="snap">' + Cravat.i18n.snap + '</button>\
         <div class="transforms">\
           <h2>' + Cravat.i18n.transforms + '</h2>';
 
-  Object.keys(Cravat.Transformer.prototype.transforms).forEach(function(item) {
-    html += '<button data-transform="' + item + '">' + Cravat.i18n['transform_' + item] + '</button>';
-  });
+    Object.keys(Cravat.Transformer.prototype.transforms).forEach(function(item) {
+      html += '<button data-transform="' + item + '">' + Cravat.i18n['transform_' + item] + '</button>';
+    });
 
-  html += '\
+    html += '\
         </div>\
         <div class="filters">\
           <h2>' + Cravat.i18n.filters + '</h2>';
 
-  Object.keys(Cravat.Filterer.prototype.filters).forEach(function(item) {
-    html += '<button data-filter="' + item + '">' + Cravat.i18n['filter_' + item] + '</button>';
-  });
+    Object.keys(Cravat.Filterer.prototype.filters).forEach(function(item) {
+      html += '<button data-filter="' + item + '">' + Cravat.i18n['filter_' + item] + '</button>';
+    });
 
-  html += '\
+    html += '\
         </div>\
         <div class="overlays">\
           <h2>' + Cravat.i18n.overlays + '</h2>';
 
-  Object.keys(Cravat.Overlayer.prototype.overlays).forEach(function(item) {
-    html += '<button data-overlay="' + item + '">' + Cravat.i18n['overlay_' + item] + '</button>';
-  });
+    Object.keys(Cravat.Overlayer.prototype.overlays).forEach(function(item) {
+      html += '<button data-overlay="' + item + '">' + Cravat.i18n['overlay_' + item] + '</button>';
+    });
+
+    html += '\
+        </div>\
+      </div>';
+  }
 
   html += '\
-        </div>\
-      </div>\
     </div>';
 
   this._rootEl.innerHTML = html;
@@ -147,6 +156,7 @@ Cravat.prototype._init = function() {
     navigator.getUserMedia({
       video: true
     }, function(stream) {
+      this._onReady();
       this._mediaStream = stream;
       this._videoEl.src = window.URL.createObjectURL(this._mediaStream);
     }.bind(this), function(err) {
@@ -164,28 +174,30 @@ Cravat.prototype._init = function() {
 };
 
 Cravat.prototype._addEvents = function() {
-  this._rootEl.querySelector('button.snap').addEventListener('click', function(e) {
-    this._snapper.snap();
-  }.bind(this));
-
-  [].slice.call(this._rootEl.querySelectorAll('.transforms button')).forEach(function(button) {
-    button.addEventListener('click', function(e) {
-      this.setTransform(e.target.dataset.transform);
+  if (this._showControls) {
+    this._rootEl.querySelector('button.snap').addEventListener('click', function(e) {
+      this._snapper.snap();
     }.bind(this));
-  }.bind(this));
 
-  [].slice.call(this._rootEl.querySelectorAll('.overlays button')).forEach(function(button) {
-    button.addEventListener('click', function(e) {
-      this.setOverlay(e.target.dataset.overlay);
+    [].slice.call(this._rootEl.querySelectorAll('.transforms button')).forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        this.setTransform(e.target.dataset.transform);
+      }.bind(this));
     }.bind(this));
-  }.bind(this));
 
-
-  [].slice.call(this._rootEl.querySelectorAll('.filters button')).forEach(function(button) {
-    button.addEventListener('click', function(e) {
-      this.setFilter(e.target.dataset.filter);
+    [].slice.call(this._rootEl.querySelectorAll('.overlays button')).forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        this.setOverlay(e.target.dataset.overlay);
+      }.bind(this));
     }.bind(this));
-  }.bind(this));
+
+
+    [].slice.call(this._rootEl.querySelectorAll('.filters button')).forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        this.setFilter(e.target.dataset.filter);
+      }.bind(this));
+    }.bind(this));
+  }
 };
 
 Cravat.prototype._removeEvents = function() {
@@ -205,11 +217,19 @@ Cravat.prototype._removeEvents = function() {
 };
 
 /**
- * Trigger a new snapshot now
+ * Trigger a new snapshot now, with the countdown
  */
 Cravat.prototype.snap = function() {
   this._snapper.snap();
 };
+
+/**
+ * Trigger a new snapshot now
+ */
+Cravat.prototype.snapNow = function() {
+  this._snapper.snapNow();
+};
+
 
 /**
  * Set a different transform

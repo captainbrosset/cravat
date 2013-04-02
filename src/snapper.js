@@ -17,7 +17,7 @@ Cravat.Snapper.prototype.snap = function() {
   this._snapInterval = setInterval(function() {
     if (step === 0) {
       clearInterval(this._snapInterval);
-      this._doSnap();
+      this.snapNow();
       this._countDownEl.innerHTML = '';
     } else {
       this._showStep(step);
@@ -26,7 +26,7 @@ Cravat.Snapper.prototype.snap = function() {
   }.bind(this), 1000);
 };
 
-Cravat.Snapper.prototype._doSnap = function() {
+Cravat.Snapper.prototype.snapNow = function() {
   var savedCanvas = document.createElement('canvas'),
     savedCtx = savedCanvas.getContext('2d');
   savedCanvas.width = this._canvas.width;
@@ -36,7 +36,6 @@ Cravat.Snapper.prototype._doSnap = function() {
   savedCtx.drawImage(this._overlay, 0, 0, this._canvas.width, this._canvas.height);
 
   if (this._onSnap) {
-    debugger;
     this._onSnap(savedCanvas.toDataURL('image/png'));
   } else {
     document.location.href = savedCanvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
