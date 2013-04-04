@@ -46,12 +46,16 @@ Cravat.i18n = {
 };
 
 Cravat.prototype._animLoop = function(render, element) {
-  var running, lastFrame = +new Date,
-    raf = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame;
+  var running, lastFrame = +new Date;
+  window.requestAnimFrame = (function() {
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(callback) {
+      window.setTimeout(callback, 1000 / 60);
+    };
+  })();
 
   function loop(now) {
     if (running !== false) {
-      raf(loop, element);
+      requestAnimFrame(loop, element);
       running = render(now - lastFrame);
       lastFrame = now;
     }
