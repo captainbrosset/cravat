@@ -110,6 +110,7 @@ Cravat.prototype._createMarkup = function() {
 
 Cravat.prototype.destroy = function() {
   this._removeEvents();
+  this._mediaStream.stop();
   this._rootEl.innerHTML = '';
 };
 
@@ -201,19 +202,21 @@ Cravat.prototype._addEvents = function() {
 };
 
 Cravat.prototype._removeEvents = function() {
-  this._rootEl.querySelector('button.snap').removeEventListener('click');
+  if (this._showControls) {
+    this._rootEl.querySelector('button.snap').removeEventListener('click');
 
-  [].slice.call(this._rootEl.querySelectorAll('.transforms button')).forEach(function(button) {
-    button.removeEventListener('click');
-  });
+    [].slice.call(this._rootEl.querySelectorAll('.transforms button')).forEach(function(button) {
+      button.removeEventListener('click');
+    });
 
-  [].slice.call(this._rootEl.querySelectorAll('.overlays button')).forEach(function(button) {
-    button.removeEventListener('click');
-  });
+    [].slice.call(this._rootEl.querySelectorAll('.overlays button')).forEach(function(button) {
+      button.removeEventListener('click');
+    });
 
-  [].slice.call(this._rootEl.querySelectorAll('.filters button')).forEach(function(button) {
-    button.removeEventListener('click');
-  });
+    [].slice.call(this._rootEl.querySelectorAll('.filters button')).forEach(function(button) {
+      button.removeEventListener('click');
+    });
+  }
 };
 
 /**
