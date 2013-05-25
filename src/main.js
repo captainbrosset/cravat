@@ -161,17 +161,20 @@ Cravat.prototype._init = function() {
     navigator.getUserMedia({
       video: true
     }, function(stream) {
-      this._onReady();
       this._mediaStream = stream;
       this._videoEl.src = window.URL.createObjectURL(this._mediaStream);
+      var calledOnReady = false;
+
+      // Start the loop to draw the video to the canvas, going through the current transform and current filter
+      this._animLoop(function() {
+        if(this._transformer.transform() && !calledOnReady) {
+          this._onReady();
+          calledOnReady = true;
+        }
+        this._videoCtx.putImageData(this._filterer.filter(this._videoCtx.getImageData(0, 0, this._width, this._height)), 0, 0);
+      }.bind(this));
     }.bind(this), function(err) {
       this._rootEl.innerHTML = 'Sorry getUserMedia failed with error: ' + err;
-    });
-
-    // Start the loop to draw the video to the canvas, going through the current transform and current filter
-    this._animLoop(function() {
-      this._transformer.transform();
-      this._videoCtx.putImageData(this._filterer.filter(this._videoCtx.getImageData(0, 0, this._width, this._height)), 0, 0);
     }.bind(this));
   } else {
     this._rootEl.innerHTML = 'Sorry your browser does not support getUserMedia';

@@ -11,7 +11,14 @@ Cravat.Transformer.prototype.use = function(transform) {
 };
 
 Cravat.Transformer.prototype.transform = function() {
-  this.transforms[this._current](this._video, this._ctx);
+  try {
+    this.transforms[this._current](this._video, this._ctx);
+    return true;
+  } catch (e) {
+    // Under some conditions, even after the user has accepted the access to the cam, drawing the video stream
+    // to the canvas may fail with NS_ERROR_NOT_AVAILABLE
+    return false;
+  }
 };
 
 Cravat.Transformer.prototype.transforms = {
