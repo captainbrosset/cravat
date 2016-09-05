@@ -120,10 +120,9 @@ Cravat.prototype.destroy = function() {
 
 Cravat.prototype._init = function() {
   window.URL = window.URL || window.webkitURL;
-  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
   // Ensure getUserMedia is here
-  if (navigator.getUserMedia) {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     // Create the HTML
     this._createMarkup();
 
@@ -158,7 +157,7 @@ Cravat.prototype._init = function() {
     this._addEvents();
 
     // Start the video feed and stream to canvas
-    navigator.getUserMedia({
+    navigator.mediaDevices.getUserMedia({
       video: true
     }, function(stream) {
       this._mediaStream = stream;
